@@ -1,0 +1,589 @@
+{
+	"info": {
+		"_postman_id": "c1bf218b-563e-4b08-b9c9-d003f9b7f207",
+		"name": "ReqResAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23331541"
+	},
+	"item": [
+		{
+			"name": "GET User/Resource",
+			"item": [
+				{
+					"name": "Positive Test Cases",
+					"item": [
+						{
+							"name": "GET List of Users On A Page",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code to be 200\", () => {\r",
+											"pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"let pageNumber = parseInt(pm.collectionVariables.get(\"pageNumber\"));\r",
+											"pm.test(\"Users on the selected page are displayed\", () => {\r",
+											"pm.expect(jsonData.page).to.eql(pageNumber)\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"pageNumber\", 2);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{getUsers}}?page={{pageNumber}}",
+									"host": [
+										"{{getUsers}}"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "{{pageNumber}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET Single User",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"userId\", 2);\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"let responseId = jsonData.data.id;\r",
+											"let userId = parseInt(pm.collectionVariables.get(\"userId\"));\r",
+											"\r",
+											"pm.test(\"Expected user id is in the response\", () => {\r",
+											"    pm.expect(responseId).to.eql(userId);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{getUsers}}/{{userId}}",
+									"host": [
+										"{{getUsers}}"
+									],
+									"path": [
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET List of Resources",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code to be 200\", () => {\r",
+											"pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{resources}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{resources}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Negative Test Cases",
+					"item": [
+						{
+							"name": "Single User Not Found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code to be 404\", () => {\r",
+											"pm.response.to.have.status(404);\r",
+											"});\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Response is empty\", () => {\r",
+											"    pm.expect(jsonData).to.be.empty;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"userId\", 23);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{getUsers}}/{{userId}}",
+									"host": [
+										"{{getUsers}}"
+									],
+									"path": [
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Single Resource Not Found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code to be 404\", () => {\r",
+											"pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Response is empty\", () => {\r",
+											"    pm.expect(jsonData).to.be.empty;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{resources}}/{{resourceId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{resources}}",
+										"{{resourceId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Register/Login User",
+			"item": [
+				{
+					"name": "Positive Test Cases",
+					"item": [
+						{
+							"name": "Create User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code to be 201\", () => {\r",
+											"pm.response.to.have.status(201)\r",
+											"});\r",
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"pm.test(\"User is created with the correct name and job provided and a create date is returned\",()=> {\r",
+											"pm.expect(jsonData.name).to.eql(\"morpheus\")\r",
+											"pm.expect(jsonData.job).to.eql(\"leader\")\r",
+											"pm.expect(jsonData.createdAt).to.exist\r",
+											"pm.expect(jsonData.createdAt).not.to.be.empty\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"morpheus\",\r\n    \"job\": \"leader\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{getUsers}}",
+									"host": [
+										"{{getUsers}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register Successful",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code to be 200\", () => {\r",
+											"pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"A successful login returns the user id an a token\", () => {\r",
+											"pm.expect(jsonData.id).to.exist;\r",
+											"pm.expect(jsonData.id).to.not.be.null;\r",
+											"pm.expect(jsonData.token).to.exist;\r",
+											"pm.expect(jsonData.token).to.not.be.empty;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"eve.holt@reqres.in\",\r\n    \"password\": \"pistol\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login Successful",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code to be 200\", () => {\r",
+											"pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Verify that a token is sent after successful login\", () => {\r",
+											"pm.expect(jsonData.token).to.exist;\r",
+											"pm.expect(jsonData.token).to.not.be.empty;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"eve.holt@reqres.in\",\r\n    \"password\": \"cityslicka\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Negative Test Cases",
+					"item": [
+						{
+							"name": "Register Unsuccessful",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code to be 400\", () => {\r",
+											"pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Response for unsuccessful register includes error message\",()=>{\r",
+											"   pm.expect(jsonData.error).not.to.be.empty;\r",
+											"   pm.expect(jsonData.error).to.eql(\"Missing password\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"sydney@fife\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login Unsuccessful",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Response status code to be 400\", () => {\r",
+											"pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response for unsuccessful login includes error message\",() =>{\r",
+											"   pm.expect(jsonData.error).not.to.be.empty;\r",
+											"   pm.expect(jsonData.error).to.eql(\"Missing password\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"peter@klaven\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "UPDATE User Profile",
+			"item": [
+				{
+					"name": "Update User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"userId\", 2);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code to be 200\", () => {\r",
+									"pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const jsonData = pm.response.json();\r",
+									"pm.test(\"User's job is updated and provides time of the update\",()=> {\r",
+									"pm.expect(jsonData.job).to.eql(\"zion resident\")\r",
+									"pm.expect(jsonData.updatedAt).to.exist;\r",
+									"pm.expect(jsonData.updatedAt).not.to.be.empty;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"morpheus\",\r\n    \"job\": \"zion resident\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{getUsers}}/{{userId}}",
+							"host": [
+								"{{getUsers}}"
+							],
+							"path": [
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://reqres.in/api",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "2"
+		},
+		{
+			"key": "resourceId",
+			"value": "23"
+		},
+		{
+			"key": "page",
+			"value": "page=2"
+		},
+		{
+			"key": "pageNumber",
+			"value": "2"
+		},
+		{
+			"key": "resources",
+			"value": "unknown"
+		},
+		{
+			"key": "getUsers",
+			"value": "https://reqres.in/api/users"
+		},
+		{
+			"key": "error",
+			"value": ""
+		}
+	]
+}
