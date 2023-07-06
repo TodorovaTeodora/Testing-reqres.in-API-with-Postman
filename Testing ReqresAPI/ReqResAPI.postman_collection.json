@@ -134,6 +134,46 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "GET Single Resource",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"resourceId\", 2);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code to be 200\", () => {\r",
+											"pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{resources}}/{{resourceId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{resources}}",
+										"{{resourceId}}"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -246,7 +286,7 @@
 											"pm.test(\"User is created with the correct name and job provided and a create date is returned\",()=> {\r",
 											"pm.expect(jsonData.name).to.eql(\"morpheus\")\r",
 											"pm.expect(jsonData.job).to.eql(\"leader\")\r",
-											"pm.expect(jsonData.createdAt).to.exist\r",
+											"pm.expect(jsonData).to.have.property(\"createdAt\");\r",
 											"pm.expect(jsonData.createdAt).not.to.be.empty\r",
 											"});"
 										],
@@ -254,6 +294,9 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -289,9 +332,9 @@
 											"const jsonData = pm.response.json();\r",
 											"\r",
 											"pm.test(\"A successful login returns the user id an a token\", () => {\r",
-											"pm.expect(jsonData.id).to.exist;\r",
+											"pm.expect(jsonData).to.have.property(\"id\");\r",
 											"pm.expect(jsonData.id).to.not.be.null;\r",
-											"pm.expect(jsonData.token).to.exist;\r",
+											"pm.expect(jsonData).to.have.property(\"token\");\r",
 											"pm.expect(jsonData.token).to.not.be.empty;\r",
 											"});"
 										],
@@ -337,7 +380,7 @@
 											"const jsonData = pm.response.json();\r",
 											"\r",
 											"pm.test(\"Verify that a token is sent after successful login\", () => {\r",
-											"pm.expect(jsonData.token).to.exist;\r",
+											"pm.expect(jsonData).to.have.property(\"token\");\r",
 											"pm.expect(jsonData.token).to.not.be.empty;\r",
 											"});"
 										],
@@ -388,6 +431,7 @@
 											"const jsonData = pm.response.json();\r",
 											"\r",
 											"pm.test(\"Response for unsuccessful register includes error message\",()=>{\r",
+											"   pm.expect(jsonData).to.have.property(\"error\");\r",
 											"   pm.expect(jsonData.error).not.to.be.empty;\r",
 											"   pm.expect(jsonData.error).to.eql(\"Missing password\");\r",
 											"});"
@@ -434,6 +478,7 @@
 											"});\r",
 											"\r",
 											"pm.test(\"Response for unsuccessful login includes error message\",() =>{\r",
+											"   pm.expect(jsonData).to.have.property(\"error\");\r",
 											"   pm.expect(jsonData.error).not.to.be.empty;\r",
 											"   pm.expect(jsonData.error).to.eql(\"Missing password\");\r",
 											"});"
@@ -496,7 +541,7 @@
 									"const jsonData = pm.response.json();\r",
 									"pm.test(\"User's job is updated and provides time of the update\",()=> {\r",
 									"pm.expect(jsonData.job).to.eql(\"zion resident\")\r",
-									"pm.expect(jsonData.updatedAt).to.exist;\r",
+									"pm.expect(jsonData).to.have.property(\"updatedAt\");\r",
 									"pm.expect(jsonData.updatedAt).not.to.be.empty;\r",
 									"});"
 								],
